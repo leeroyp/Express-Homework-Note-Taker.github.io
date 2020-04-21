@@ -19,28 +19,26 @@ app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
-app.get("/", function (req, res) {
+app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
-// app.get("/", function(req, res) {
-//     res.sendFile(path.join(__dirname, "view.html"));
-//   });
 
-//   app.get("/api/notes", function(req, res) {
-//     res.sendFile(path.join(__dirname, "add.html"));
-//   });
+app.post("/api/notes", function (req, res) {
+    var newNotes = req.body;
+    notes.push(req.body);
+    req.body.id = notes.length;
+    res.json(notes);
+   
+   
+    fs.writeFile(("./db/db.json"), storeNotes, function (err, data) {
+        if (err) throw err;
+    });
+})
 
-//   app.post("/api/notes", function(req, res) {
-//     var newCharacter = req.body;
-//     newCharacter.routeName = newCharacter.name.replace(/\s+/g, "").toLowerCase();
-//     console.log(newCharacter);
-//     characters.push(newCharacter);
-//     res.json(newCharacter);
-//   });
 
-//   app.post("/api/notes/:id", function(req, res){
 
-//   })
+
+
 
 // =============================================================================
 // LISTENER
@@ -50,3 +48,8 @@ app.get("/", function (req, res) {
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);
 });
+
+// app.post("/api/notes", function (req, res) {
+//     let newNotes = req.body;
+//     res.json(newNotes);
+// });
