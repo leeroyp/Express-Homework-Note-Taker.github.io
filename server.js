@@ -34,9 +34,7 @@ app.post("/api/notes", function (req, res) {
     });
 })
 
-app.delete("/api/notes/:id", function (req, res) {
-    let chosen = parseInt(req.params.id);
-   
+app.delete("/api/notes/:id", function (req, res) { 
     notes = notes.filter(function(note) {
         return note.id != req.params.id;
       });
