@@ -1,13 +1,14 @@
-
-var express = require("express");
-var path = require("path");
-var app = express();
+const express = require("express");
+const fs = require("fs");
+const app = express();
+const path = require("path");
 let notes = require("./db/db.json");
+// const util = require("util");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 0004;
 
 app.use(express.static("public"));
 
@@ -19,7 +20,7 @@ app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
-app.get("*", function (req, res) {
+app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
@@ -28,28 +29,25 @@ app.post("/api/notes", function (req, res) {
     notes.push(req.body);
     req.body.id = notes.length;
     res.json(notes);
-   
-   
-    fs.writeFile(("./db/db.json"), storeNotes, function (err, data) {
+    fs.writeFile(("./db/db.json"), newNotes, function (err, data) {
         if (err) throw err;
     });
 })
 
-
-
-
-
-
-// =============================================================================
-// LISTENER
-// The below code effectively "starts" our server
-// =============================================================================
-
-app.listen(PORT, function() {
-  console.log("App listening on PORT: " + PORT);
+app.delete("/api/notes/:id", function (req, res) {
+    let chosen = parseInt(req.params.id);
+   
+    notes = notes.filter(function(note) {
+        return note.id != req.params.id;
+      });
+    fs.writeFile("./db/db.json", JSON.stringify(notes), function(err) {
+        if(err) {
+            throw err;
+        }
+    })
+    return res.json(false);
 });
 
-// app.post("/api/notes", function (req, res) {
-//     let newNotes = req.body;
-//     res.json(newNotes);
-// });
+app.listen(PORT, function () {
+    console.log(`App is listening on PORT: ${PORT}`)
+});
